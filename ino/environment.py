@@ -168,12 +168,13 @@ class Environment(dict):
         return [os.path.join(p, *dirname_parts) for p in places]
 
     def board_models(self):
-        if 'board_models' in self:
-            return self['board_models']
+        print "handling board_models()"
+        #if 'board_models' in self:
+        #    return self['board_models']
 
-        boards_txt = self.find_arduino_file('boards.txt', ['hardware', 'arduino'], 
+        boards_txt = self.find_arduino_file('boards.txt', ['hardware', 'arduino', 'avr'],
                                             human_name='Board description file (boards.txt)')
-
+            
         self['board_models'] = BoardModels()
         self['board_models'].default = self.default_board_model
         with open(boards_txt) as f:
@@ -181,14 +182,27 @@ class Environment(dict):
                 line = line.strip()
                 if not line or line.startswith('#'):
                     continue
-                multikey, val = line.split('=')
-                multikey = multikey.split('.')
-
+                #if line.startswith("menu"):
+                #    #print "skipping line starting with menu: ", line
+                #    continue
+                #print "processing boards.txt line: ", line
+                try:
+                    multikey, val = line.split('=')
+                    multikey = multikey.split('.')
+                except:
+                    print "BAD LINE: ", line
+                    continue
                 subdict = self['board_models']
                 for key in multikey[:-1]:
-                    if key not in subdict:
-                        subdict[key] = {}
+                    try:
+                        if key not in subdict or type(subdict[key]) == type(""):
+                            subdict[key] = {}
+                    except:
+                        print "processing line: ", line
+                        print "unable to add key '", key, "' to subdict: ", subdict
                     subdict = subdict[key]
+                    if type(subdict) == type(""):
+                        subdict = {}
 
                 subdict[multikey[-1]] = val
 
@@ -279,5 +293,9 @@ class Environment(dict):
 
 class BoardModels(OrderedDict):
     def format(self):
-        map = [(key, val['name']) for key, val in self.iteritems()]
+        #print "BoardModels: dir(self) is:"
+        #print dir(self)
+        map = [(key, val['name']) for key, val in self.iteritems() if 'name' in val]
+        #map = [(key, val['name']) for key, val in self.iteritems()]
+        print map
         return format_available_options(map, head_width=12, default=self.default)

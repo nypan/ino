@@ -48,7 +48,7 @@ class Build(Command):
 
     def discover(self):
         self.e.find_arduino_dir('arduino_core_dir', 
-                                ['hardware', 'arduino', 'cores', 'arduino'], 
+                                ['hardware', 'arduino', 'avr', 'cores', 'arduino'], 
                                 ['Arduino.h'] if self.e.arduino_lib_version.major else ['WProgram.h'], 
                                 'Arduino core library')
 
@@ -57,7 +57,7 @@ class Build(Command):
 
         if self.e.arduino_lib_version.major:
             self.e.find_arduino_dir('arduino_variants_dir',
-                                    ['hardware', 'arduino', 'variants'],
+                                    ['hardware', 'arduino', 'avr', 'variants'],
                                     human_name='Arduino variants directory')
 
         toolset = [
