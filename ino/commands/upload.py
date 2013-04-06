@@ -84,8 +84,6 @@ class Upload(Command):
         ''' the 'path' key is no longer in board['bootloader']
         the new check for 'caterina' in ['file'] is only tested on the Leonardo
         '''
-        print board
-        print board['bootloader']
         #if board['bootloader']['path'] == "caterina":
         if 'caterina' in board['bootloader']['file']:
             caterina_port = None
