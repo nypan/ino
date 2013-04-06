@@ -80,7 +80,14 @@ class Upload(Command):
         # this wait a moment for the bootloader to enumerate. On Windows, also must
         # deal with the fact that the COM port number changes from bootloader to
         # sketch.
-        if board['bootloader']['path'] == "caterina":
+
+        ''' the 'path' key is no longer in board['bootloader']
+        the new check for 'caterina' in ['file'] is only tested on the Leonardo
+        '''
+        print board
+        print board['bootloader']
+        #if board['bootloader']['path'] == "caterina":
+        if 'caterina' in board['bootloader']['file']:
             caterina_port = None
             before = self.e.list_serial_ports()
             if port in before:
